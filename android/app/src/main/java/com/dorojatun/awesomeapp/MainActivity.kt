@@ -1,4 +1,4 @@
-package com.myawesomeapp
+package com.dorojatun.awesomeapp
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
