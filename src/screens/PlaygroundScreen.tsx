@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Code2, RefreshCcw, Send } from 'lucide-react-native';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { MainTabParamList } from '../navigation/types';
+import Config from 'react-native-config';
 
 type Props = BottomTabScreenProps<MainTabParamList, 'Playground'>
 
@@ -19,7 +20,7 @@ export default function PlaygroundScreen({ route }: Props) {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get('http://192.168.100.21:3000/api/data');
+      const response = await axios.get(`${Config.API_URL}/api/data`);
       setData(response.data);
     } catch (err) {
       setError('Failed to fetch data');
@@ -33,7 +34,7 @@ export default function PlaygroundScreen({ route }: Props) {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post('http://192.168.100.21:3000/api/data', {
+      const response = await axios.post(`${Config.API_URL}/api/data`, {
         title,
         body,
         userId: user?.id,
@@ -63,7 +64,7 @@ export default function PlaygroundScreen({ route }: Props) {
         <View className="bg-white rounded-3xl p-6 shadow-xl border border-slate-100">
           <Text className="text-slate-500 mb-4 font-medium uppercase tracking-wider text-xs">API Endpoint</Text>
           <View className="bg-slate-100 p-3 rounded-xl mb-6">
-            <Text className="text-slate-600 font-mono text-xs">GET https://jsonplaceholder.typicode.com/posts/1</Text>
+            <Text className="text-slate-600 font-mono text-xs">{`GET {MY_NEXT_JS_API_URL}/api/data`}</Text>
           </View>
 
           {loading ? (
