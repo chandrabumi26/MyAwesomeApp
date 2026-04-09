@@ -26,7 +26,9 @@ export default function DigitalClock({ className }: Props) {
 
     return (
         <View className={className}>
-            <Text className="text-center text-2xl font-bold">{formatTime(time)}</Text>
+            <Text className="text-center text-5xl font-extrabold tracking-tighter text-white">
+                {formatTime(time)}
+            </Text>
         </View>
     );
 }
