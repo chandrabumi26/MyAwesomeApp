@@ -1,14 +1,14 @@
 import { ScrollView, Text, View, Image, TouchableOpacity, Alert } from "react-native";
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { MainStackParamList } from '../navigation/types';
+import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
+import { MainTabParamList } from '../navigation/types';
 import DigitalClock from "./components/DigitalClock";
 import { CameraOptions, launchCamera } from "react-native-image-picker";
 import { supabase } from '../lib/supabaes';
 import { useEffect, useState } from "react";
 
-type Props = NativeStackScreenProps<MainStackParamList, 'Home'>;
+type Props = BottomTabScreenProps<MainTabParamList, 'Attendance'>;
 
-export default function HomeScreen({ route }: Props) {
+export default function AttendanceScreen({ route }: Props) {
   const user = route.params?.user;
 
   const [attendance, setAttendance] = useState<any[]>([]);
@@ -18,8 +18,11 @@ export default function HomeScreen({ route }: Props) {
       .from('attendance_logs')
       .select('*');
 
-    if (error) throw error;
-    setAttendance(data);
+    if (error) {
+      console.error('Error loading attendance:', error);
+      return;
+    }
+    setAttendance(data || []);
   }
 
   const takePhotoAndUpload = () => {
@@ -41,44 +44,13 @@ export default function HomeScreen({ route }: Props) {
         try {
           if (!photo.uri) throw new Error('Photo URI is missing');
 
-          console.log('Mengambil file foto via XHR...');
-          const blob: any = await new Promise((resolve, reject) => {
-            const xhr = new XMLHttpRequest();
-            xhr.onload = function () {
-              resolve(xhr.response);
-            };
-            xhr.onerror = function (e) {
-              console.error('XHR Error:', e);
-              reject(new TypeError('Network request failed (Local File)'));
-            };
-            xhr.responseType = 'blob';
-            xhr.open('GET', photo.uri!, true);
-            xhr.send(null);
-          });
-
-          const fileName = `attendance/${Date.now()}.jpg`;
-          
-          console.log('Mengupload ke Storage...');
-          const { error: storageError } = await supabase.storage
-            .from('photos')
-            .upload(fileName, blob, {
-              contentType: 'image/jpeg',
-            });
-
-          if (storageError) throw storageError;
-
-          console.log('Mendapatkan URL publik...');
-          const { data: { publicUrl } } = supabase.storage
-            .from('photos')
-            .getPublicUrl(fileName);
-
           console.log('Menyimpan ke Database...');
           const { error: dbError } = await supabase
             .from('attendance_logs')
             .insert([
-              { 
-                photo_url: publicUrl, 
-                capture_time: currentTime 
+              {
+                photo_url: "dummy",
+                capture_time: currentTime
               }
             ]);
 
@@ -97,10 +69,10 @@ export default function HomeScreen({ route }: Props) {
 
   useEffect(() => {
     loadAttendance();
-  },[])
+  }, [])
 
   return (
-    <ScrollView className="flex-1 bg-slate-50" contentContainerStyle={{ flexGrow: 1 }}>
+    <ScrollView className="flex-1 bg-slate-50" contentContainerStyle={{ flexGrow: 1, paddingBottom: 120 }}>
       <View className="mt-10 mx-4">
         <Text className="text-center text-2xl font-bold">Hi there,</Text>
         {user && (
@@ -125,11 +97,15 @@ export default function HomeScreen({ route }: Props) {
           </TouchableOpacity>
         </View>
 
-        <View className="rounded-3xl bg-white border-1 border-black shadow-2xl w-full mt-10 items-center p-5 gap-5">
-          <Text className="text-center text-2xl font-bold mb-2">Attendance</Text>
-          {attendance.map((item) => (
-            <Text key={item.id} className="text-center text-lg font-bold">{item.capture_time}</Text>
-          ))}
+        <View className="rounded-3xl bg-white border-1 border-black shadow-2xl w-full mt-10 items-center p-5">
+          <Text className="text-center text-2xl font-bold mb-2">Attendance Histroy</Text>
+          {attendance.length === 0 ? (
+            <Text className="text-slate-400">No logs yet.</Text>
+          ) : (
+            attendance.map((item) => (
+              <Text key={item.id} className="text-center text-lg font-bold">{item.capture_time}</Text>
+            ))
+          )}
         </View>
       </View>
     </ScrollView>

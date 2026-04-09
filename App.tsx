@@ -12,7 +12,7 @@ import { Session } from '@supabase/supabase-js';
 import LandingScreen from './src/screens/LandingScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import SignUp from './src/screens/SignUp';
-import HomeScreen from './src/screens/HomeScreen';
+import MainTabNavigator from './src/navigation/MainTabNavigator';
 
 GoogleSignin.configure({
   // WAJIB menggunakan Web Client ID meskipun aplikasinya Android
@@ -44,8 +44,8 @@ function App() {
         {session && session.user ? (
           <MainStack.Navigator screenOptions={{ headerShown: false }}>
             <MainStack.Screen
-              name="Home"
-              component={HomeScreen}
+              name="MainTabs"
+              component={MainTabNavigator}
               initialParams={{ user: session.user }}
             />
           </MainStack.Navigator>

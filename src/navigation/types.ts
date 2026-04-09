@@ -6,6 +6,13 @@ export type RootStackParamList = {
   SignUp: undefined;
 };
 
+export type MainTabParamList = {
+  Attendance: { user: User };
+  Playground: { user: User };
+  User: undefined;
+};
+
 export type MainStackParamList = {
   Home: { user: User };
+  MainTabs: { user: User };
 };
