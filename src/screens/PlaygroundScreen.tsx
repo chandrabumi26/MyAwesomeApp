@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, TextInput } from 'react-native';
 import axios from 'axios';
-import { Code2, RefreshCcw } from 'lucide-react-native';
+import { Code2, RefreshCcw, Send } from 'lucide-react-native';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { MainTabParamList } from '../navigation/types';
 
@@ -19,7 +19,7 @@ export default function PlaygroundScreen({ route }: Props) {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get('https://jsonplaceholder.typicode.com/posts/1');
+      const response = await axios.get('http://192.168.100.21:3000/api/data');
       setData(response.data);
     } catch (err) {
       setError('Failed to fetch data');
@@ -33,7 +33,7 @@ export default function PlaygroundScreen({ route }: Props) {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post('https://jsonplaceholder.typicode.com/posts', {
+      const response = await axios.post('http://192.168.100.21:3000/api/data', {
         title,
         body,
         userId: user?.id,
@@ -43,6 +43,7 @@ export default function PlaygroundScreen({ route }: Props) {
       setError('Failed to post data');
       console.error(err);
     } finally {
+      fetchData();
       setLoading(false);
     }
   }
@@ -137,7 +138,7 @@ export default function PlaygroundScreen({ route }: Props) {
             onPress={handlePostData}
             className="mt-8 bg-indigo-500 rounded-2xl py-4 flex-row justify-center items-center shadow-lg active:bg-indigo-600"
           >
-            <RefreshCcw size={20} color="white" className="mr-2" />
+            <Send size={20} color="white" className="mr-2" />
             <Text className="text-white font-bold text-lg">Post Data</Text>
           </TouchableOpacity>
         </View>
